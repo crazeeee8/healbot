@@ -283,7 +283,7 @@ def trigger_morning():
     return "Triggered morning list", 200
 
 # Endpoint to set Telegram webhook (call this once after starting with host configured)
-@app.route("/set_webhook", methods=["POST"])
+@app.route("/set_webhook", methods=["POST", "GET"])
 def set_webhook():
     if not HOSTNAME:
         return "HOSTNAME not set in .env", 400
