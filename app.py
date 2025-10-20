@@ -103,6 +103,7 @@ def send_morning_list_manual():
     day_key = datetime.now(TZ).strftime("%A").lower()
     send_morning_list_for_day(day_key)
 
+
 def send_morning_list_for_day(day_key):
     text = format_morning_list(day_key)
     # quick reply buttons as inline choices (note: these are not per-task granular)
@@ -158,7 +159,7 @@ def schedule_fixed_tasks():
             typ = t.get("type")
             if tm and typ in ("fixed", "short"):
                 try:
-                    hh, mm = map(int, tm.split(":"))
+                    hh, mm = map(int, tm.split(':'))
                 except Exception:
                     continue
                 # add daily job at hh:mm that checks current weekday
@@ -188,7 +189,7 @@ def schedule_fixed_tasks():
 # Setup daily jobs
 def setup_daily_jobs():
     # Morning list at MORNING_TIME
-    hh, mm = map(int, schedule.get("meta", {}).get("morning_time", MORNING_TIME).split(":"))
+    hh, mm = map(int, schedule.get("meta", {}).get("morning_time", MORNING_TIME).split(':'))
     scheduler.add_job(lambda: send_morning_list_for_day(datetime.now(TZ).strftime("%A").lower()),
                       trigger=CronTrigger(hour=hh, minute=mm))
     # Hydration: schedule times 9,11,13,15,17,19,21,23 local time
@@ -292,6 +293,11 @@ def set_webhook():
     return jsonify(status=r.json())
 
 if __name__ == "__main__":
+    # Send optional startup message (non-fatal)
+    try:
+        send_message("🤖 HealBot is now active! You'll get your daily wellness plan at 8:00 AM 🌞")
+    except Exception as e:
+        logger.error(f"Startup message failed: {e}")
     # Schedule jobs and start
     setup_daily_jobs()
     scheduler.start()
