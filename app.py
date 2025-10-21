@@ -292,6 +292,11 @@ def set_webhook():
     r = requests.post(set_url, data={"url": webhook_url}, timeout=10)
     return jsonify(status=r.json())
 
+# Health check / root endpoint
+@app.route("/", methods=["GET"])
+def home():
+    return "✅ HealBot is running and webhook active.", 200
+
 if __name__ == "__main__":
     # Send optional startup message (non-fatal)
     try:
